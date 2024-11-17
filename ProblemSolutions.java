@@ -1,16 +1,16 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   [Your Name] / [Your Section Number]
+ *      Ethan Grassia / Section 001
  *
  *   This java file contains the problem solutions for the methods selectionSort,
- *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
+ *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueSleds methods.
  *
  ********************************************************************/
 
 import java.util.Arrays;
 
 public class ProblemSolutions {
-
     /**
      * Method SelectionSort
      *
@@ -28,36 +28,52 @@ public class ProblemSolutions {
      *                        to not be passed and defaulting to 'true (or ascending sort).
      */
 
-    public  void selectionSort(int[] values) {
+    public void selectionSort(int[] values) {
         selectionSort(values, true);
     }
 
-    public static void selectionSort(int[] values, boolean ascending ) {
-
+    public static void selectionSort(int[] values, boolean ascending) {
         int n = values.length;
 
         for (int i = 0; i < n - 1; i++) {
-
             // YOU CODE GOES HERE -- COMPLETE THE INNER LOOP OF THIS
             // "SELECTION SORT" ALGORITHM.
             // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
 
+            int index = i;
+
+            for (int j = i + 1; j < n; j++) {
+
+                if (ascending) {
+                    if (values[j] < values[index]) {
+                        index = j;
+                    }
+                } else {
+                    if (values[j] > values[index]) {
+                        index = j;
+                    }
+                }
+
+            }
+
+            int temp = values[index];
+            values[index] = values[i];
+            values[i] = temp;
         }
 
     } // End class selectionSort
 
-
     /**
-     *  Method mergeSortDivisibleByKFirst
+     * Method mergeSortDivisibleByKFirst
      *
-     *  This method will perform a merge sort algorithm. However, all numbers
-     *  that are divisible by the argument 'k', are returned first in the sorted
-     *  list. Example:
-     *        values = { 10, 3, 25, 8, 6 }, k = 5
-     *        Sorted result should be --> { 10, 25, 3, 6, 8 }
+     * This method will perform a merge sort algorithm. However, all numbers
+     * that are divisible by the argument 'k', are returned first in the sorted
+     * list. Example:
+     *       values = { 10, 3, 25, 8, 6 }, k = 5
+     *       Sorted result should be --> { 10, 25, 3, 6, 8 }
      *
-     *        values = { 30, 45, 22, 9, 18, 39, 6, 12 }, k = 6
-     *        Sorted result should be --> { 30, 18, 6, 12, 9, 22, 39, 45 }
+     *       values = { 30, 45, 22, 9, 18, 39, 6, 12 }, k = 6
+     *       Sorted result should be --> { 30, 18, 6, 12, 9, 22, 39, 45 }
      *
      * As shown above, this is a normal merge sort operation, except for the numbers
      * divisible by 'k' are first in the sequence.
@@ -67,16 +83,14 @@ public class ProblemSolutions {
      */
 
     public void mergeSortDivisibleByKFirst(int[] values, int k) {
-
         // Protect against bad input values
-        if (k == 0)  return;
-        if (values.length <= 1)  return;
+        if (k == 0) return;
+        if (values.length <= 1) return;
 
-        mergeSortDivisibleByKFirst(values, k, 0, values.length-1);
+        mergeSortDivisibleByKFirst(values, k, 0, values.length - 1);
     }
 
     private void mergeSortDivisibleByKFirst(int[] values, int k, int left, int right) {
-
         if (left >= right)
             return;
 
@@ -90,8 +104,7 @@ public class ProblemSolutions {
      * The merging portion of the merge sort, divisible by k first
      */
 
-    private void mergeDivisbleByKFirst(int arr[], int k, int left, int mid, int right)
-    {
+    private void mergeDivisbleByKFirst(int arr[], int k, int left, int mid, int right) {
         // YOUR CODE GOES HERE, THIS METHOD IS NO MORE THAN THE STANDARD MERGE PORTION
         // OF A MERGESORT, EXCEPT THE NUMBERS DIVISIBLE BY K MUST GO FIRST WITHIN THE
         // SEQUENCE PER THE DISCUSSION IN THE PROLOGUE ABOVE.
@@ -102,10 +115,49 @@ public class ProblemSolutions {
         // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
         // OF THIS PROGRAMMING EXERCISES.
 
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        for (int i = 0; i < n1; ++i)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j)
+            R[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, k_index = left;
+
+        while (i < n1 && j < n2) {
+
+            boolean LiDivisible = (L[i] % k == 0);
+            boolean RjDivisible = (R[j] % k == 0);
+
+            if (LiDivisible && !RjDivisible) {
+                arr[k_index++] = L[i++];
+            } else if (!LiDivisible && RjDivisible) {
+                arr[k_index++] = R[j++];
+            } else if (LiDivisible && RjDivisible) {
+                arr[k_index++] = L[i++];
+            } else {
+                if (L[i] <= R[j]) {
+                    arr[k_index++] = L[i++];
+                } else {
+                    arr[k_index++] = R[j++];
+                }
+            }
+        }
+
+        while (i < n1) {
+            arr[k_index++] = L[i++];
+        }
+
+        while (j < n2) {
+            arr[k_index++] = R[j++];
+        }
+
         return;
-
     }
-
 
     /**
      * Method asteroidsDestroyed
@@ -122,8 +174,8 @@ public class ProblemSolutions {
      * Return true if possible for all asteroids to be destroyed. Otherwise, return false.
      *
      * Example 1:
-     *   Input: mass = 10, asteroids = [3,9,19,5,21]
-     *   Output: true
+     *  Input: mass = 10, asteroids = [3,9,19,5,21]
+     *  Output: true
      *
      * Explanation: One way to order the asteroids is [9,19,5,3,21]:
      * - The planet collides with the asteroid with a mass of 9. New planet mass: 10 + 9 = 19
@@ -134,8 +186,8 @@ public class ProblemSolutions {
      * All asteroids are destroyed.
      *
      * Example 2:
-     *   Input: mass = 5, asteroids = [4,9,23,4]
-     *   Output: false
+     *  Input: mass = 5, asteroids = [4,9,23,4]
+     *  Output: false
      *
      * Explanation:
      * The planet cannot ever gain enough mass to destroy the asteroid with a mass of 23.
@@ -143,9 +195,9 @@ public class ProblemSolutions {
      * This is less than 23, so a collision would not destroy the last asteroid.
      *
      * Constraints:
-     *     1 <= mass <= 105
-     *     1 <= asteroids.length <= 105
-     *     1 <= asteroids[i] <= 105
+     *    1 <= mass <= 10^5
+     *    1 <= asteroids.length <= 10^5
+     *    1 <= asteroids[i] <= 10^5
      *
      * @param mass          - integer value representing the mass of the planet
      * @param asteroids     - integer array of the mass of asteroids
@@ -153,13 +205,20 @@ public class ProblemSolutions {
      */
 
     public static boolean asteroidsDestroyed(int mass, int[] asteroids) {
-
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
+        long currentMass = mass;
+        Arrays.sort(asteroids);
 
-        return false;
+        for (int asteroid : asteroids) {
+            if (currentMass >= asteroid) {
+                currentMass += asteroid;
+            } else {
+                return false;
+            }
+        }
 
+        return true;
     }
-
 
     /**
      * Method numRescueSleds
@@ -171,19 +230,19 @@ public class ProblemSolutions {
      * of rescue sleds to carry every given person.
      *
      * Example 1:
-     *    Input: people = [1,2], limit = 3
-     *    Output: 1
-     *    Explanation: 1 sled (1, 2)
+     *   Input: people = [1,2], limit = 3
+     *   Output: 1
+     *   Explanation: 1 sled (1, 2)
      *
      * Example 2:
-     *    Input: people = [3,2,2,1], limit = 3
-     *    Output: 3
-     *    Explanation: 3 sleds (1, 2), (2) and (3)
+     *   Input: people = [3,2,2,1], limit = 3
+     *   Output: 3
+     *   Explanation: 3 sleds (1, 2), (2) and (3)
      *
      * Example 3:
-     *    Input: people = [3,5,3,4], limit = 5
-     *    Output: 4
-     *    Explanation: 4 sleds (3), (3), (4), (5)
+     *   Input: people = [3,5,3,4], limit = 5
+     *   Output: 4
+     *   Explanation: 4 sleds (3), (3), (4), (5)
      *
      * @param people    - an array of weights for people that need to go in a sled
      * @param limit     - the weight limit per sled
@@ -191,12 +250,25 @@ public class ProblemSolutions {
      */
 
     public static int numRescueSleds(int[] people, int limit) {
-
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
+        Arrays.sort(people);
 
-        return -1;
+        int left = 0;
+        int right = people.length - 1;
 
+        int sleds = 0;
+
+        while (left <= right) {
+            if (people[left] + people[right] <= limit) {
+                left++;
+                right--;
+            } else {
+                right--;
+            }
+            sleds++;
+        }
+
+        return sleds;
     }
 
 } // End Class ProblemSolutions
-
